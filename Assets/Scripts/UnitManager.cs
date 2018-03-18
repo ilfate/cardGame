@@ -11,6 +11,8 @@ public class UnitManager : MonoBehaviour {
 	void Start () {
 		this.initiativePanel = GameObject.Find ("InitiativePanel");
 
+
+		this.CreateUnit ();
 		this.CreateUnit ();
 	}
 

@@ -7,11 +7,11 @@ public class Unit : MonoBehaviour {
 	private int health;
 	private string unitName;
 	private int startInitiative;
-	private int currentInitiative;
+	public int currentInitiative;
 
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		this.startInitiative = 5;
 		this.currentInitiative = this.startInitiative;
 	}
