@@ -13,7 +13,7 @@ public class InitiativePanel : MonoBehaviour {
 	public Rect rect;
 	protected Dictionary<int, GameObject> numbersList;
 
-	protected float itemWidth;
+	public float itemWidth;
 
 	void Awake() {
 		this.currentInitiative = 0;
@@ -31,8 +31,7 @@ public class InitiativePanel : MonoBehaviour {
 			number.GetComponent<Text> ().text = i.ToString ();
 			InitiativeNumber numberComponent = number.GetComponent<InitiativeNumber> ();
 			numberComponent.number = i;
-			numberComponent.itemWidth = this.itemWidth;
-			numberComponent.CalculatePosition (i - this.currentInitiative);
+			numberComponent.CalculatePosition (i - this.currentInitiative, true);
 			//this.UpdateNumber (number);
 			this.numbersList.Add (i, number);
 		}
@@ -80,7 +79,7 @@ public class InitiativePanel : MonoBehaviour {
 		bool noSpaceLeft = false;
 		while (!noSpaceLeft) {
 			InitiativeNumber numberObj = this.numbersList [initiative].GetComponent<InitiativeNumber>();
-			noSpaceLeft = !numberObj.CalculatePosition (position);
+			noSpaceLeft = !numberObj.CalculatePosition (position, false);
 			if (noSpaceLeft)
 				break;
 			if (this.list.ContainsKey (initiative)) {
