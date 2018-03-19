@@ -32,8 +32,10 @@ public class InitiativePanel : MonoBehaviour {
 			InitiativeNumber numberComponent = number.GetComponent<InitiativeNumber> ();
 			numberComponent.number = i;
 			numberComponent.CalculatePosition (i - this.currentInitiative, true);
+
 			//this.UpdateNumber (number);
 			this.numbersList.Add (i, number);
+
 		}
 	}
 	
