@@ -13,7 +13,7 @@ public class InitiativePanel : MonoBehaviour {
 	public Rect rect;
 	protected Dictionary<int, GameObject> numbersList;
 
-	public float itemWidth;
+	public static float itemWidth;
 
 	void Awake() {
 		this.currentInitiative = 0;
@@ -25,13 +25,13 @@ public class InitiativePanel : MonoBehaviour {
 	void Start () {
 		Canvas.ForceUpdateCanvases ();
 		this.rect = this.GetComponent<RectTransform> ().rect;
-		this.itemWidth = listItemPrefab.GetComponent<RectTransform> ().rect.width;
+		InitiativePanel.itemWidth = listItemPrefab.GetComponent<RectTransform> ().rect.width;
 		for (int i = 0; i < 100; i++) {
 			GameObject number = Instantiate (this.numberListPrefab, Vector3.zero, Quaternion.identity, this.transform);
 			number.GetComponent<Text> ().text = i.ToString ();
 			InitiativeNumber numberComponent = number.GetComponent<InitiativeNumber> ();
 			numberComponent.number = i;
-			numberComponent.CalculatePosition (i - this.currentInitiative, true);
+			numberComponent.CalculatePosition (i - this.currentInitiative, false);
 
 			//this.UpdateNumber (number);
 			this.numbersList.Add (i, number);
@@ -66,31 +66,34 @@ public class InitiativePanel : MonoBehaviour {
 
 		slot.Add (newListItem);
 		this.list.Add (initiative, slot);
-		this.RenderList ();
+		this.RenderList (false);
 	}
 
 	public float GetRenderStartPosition()
 	{
-		return - this.rect.width / 2 + (this.itemWidth / 2);
+		return - this.rect.width / 2 + (InitiativePanel.itemWidth / 2);
 	}
 
-	public void RenderList() 
+	public void RenderList(bool isAnimated = true) 
 	{
 		int initiative = this.currentInitiative;
 		int position = 0;
 		bool noSpaceLeft = false;
 		while (!noSpaceLeft) {
 			InitiativeNumber numberObj = this.numbersList [initiative].GetComponent<InitiativeNumber>();
-			noSpaceLeft = !numberObj.CalculatePosition (position, false);
+			noSpaceLeft = !numberObj.CalculatePosition (position, isAnimated);
 			if (noSpaceLeft)
 				break;
 			if (this.list.ContainsKey (initiative)) {
 				// yes we have here items
 				List<GameObject> slot = this.list [initiative];
+				int unitIconPosition = 0;
 				foreach (GameObject itemObj in slot) {
 					InitiativeItem item = itemObj.GetComponent<InitiativeItem> ();
-					item.CalculatePosition (position);
-					position++;
+					item.transform.SetParent(numberObj.transform, false);
+					item.CalculatePosition (unitIconPosition);
+					unitIconPosition ++;
+					position ++;
 				}
 			} else {
 				position++;

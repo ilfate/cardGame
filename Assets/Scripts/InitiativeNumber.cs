@@ -2,23 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using DigitalRuby.Tween;
+
 public class InitiativeNumber : MonoBehaviour {
 
 	public int number;
-	public float moveTime = 0.1f;
+	public float moveTime = 10.03f;
 	private float inverseMoveTime;
 
 	protected InitiativePanel panel;
 
 	void Awake () {
 		this.panel = this.transform.parent.gameObject.GetComponent<InitiativePanel> ();
-		this.inverseMoveTime = 1f / this.moveTime;
+		//this.inverseMoveTime = 1f / this.moveTime;
 	}
 
-	public bool CalculatePosition(int position, bool isInstantMove = false)
+	public bool CalculatePosition(int position, bool isAnimated = true)
 	{
 		float start = this.panel.GetRenderStartPosition ();
-		float x = start + (position * this.panel.itemWidth);
+		float x = start + (position * InitiativePanel.itemWidth);
 		if (x > start + this.panel.rect.width || x < start) {
 			this.gameObject.SetActive (false);
 			return false;
@@ -26,10 +28,14 @@ public class InitiativeNumber : MonoBehaviour {
 		bool wasActive = this.gameObject.activeSelf;
 		this.gameObject.SetActive (true);
 		Vector3 end = new Vector3 (x, - this.panel.rect.height / 2, 0);
-		if (isInstantMove || !wasActive) {
+		if (!isAnimated || !wasActive) {
 			this.transform.localPosition = end;
 		} else {
-			StartCoroutine (this.SmoothMovement (end));
+			//StartCoroutine (this.SmoothMovement (end));
+			this.gameObject.Tween("MoveNumber" + this.number, this.transform.localPosition, end, 0.3f, TweenScaleFunctions.CubicEaseIn, (t) =>
+				{
+					this.transform.localPosition = t.CurrentValue;
+				}, (t2) => { });
 		}
 		return true;
 	}
@@ -37,9 +43,10 @@ public class InitiativeNumber : MonoBehaviour {
 	protected IEnumerator SmoothMovement(Vector3 end)
 	{
 		float sqrRemainDistance = (this.transform.localPosition - end).sqrMagnitude;
+		float fullDistance = (this.transform.localPosition - end).magnitude; 
 
 		while (sqrRemainDistance > float.Epsilon) {
-			Vector3 newPosition = Vector3.MoveTowards (this.transform.localPosition, end, 50 * Time.deltaTime);
+			Vector3 newPosition = Vector3.MoveTowards (this.transform.localPosition, end, fullDistance * Time.deltaTime / moveTime);
 
 			this.transform.localPosition = newPosition;
 			sqrRemainDistance = (this.transform.localPosition - end).sqrMagnitude;

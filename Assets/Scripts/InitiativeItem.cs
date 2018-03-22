@@ -5,18 +5,19 @@ using UnityEngine;
 public class InitiativeItem : MonoBehaviour {
 
 	public Unit unit;
-	public InitiativePanel panel;
+	protected Rect parentRect;
 
 	// Use this for initialization
 	void Awake () {
 		Canvas.ForceUpdateCanvases ();
-		this.panel = this.transform.parent.gameObject.GetComponent<InitiativePanel> ();
+		this.parentRect = this.transform.parent.gameObject.GetComponent<RectTransform> ().rect;
 	}
 
 	public void CalculatePosition(int positionInList) {
-		float y = - this.panel.rect.height / 2;
-		float start = - this.panel.rect.width / 2 + (this.panel.itemWidth / 2);
-		float x = start + (positionInList * this.panel.itemWidth); 
+		//Debug.Log(this.transform.parent.GetComponent<RectTransform> ().rect.height);
+		float y = 0f;
+		float start = 0f;
+		float x = start + (positionInList * InitiativePanel.itemWidth); 
 		this.transform.localPosition = new Vector3 (x, y, 0);
 	}
 	

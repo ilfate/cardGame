@@ -41,12 +41,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit: {fileID: 0}
-  parentRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+  panel: {fileID: 0}
 --- !u!114 &114672298775577430
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -95,6 +90,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 28.4, y: -25}
+  m_AnchoredPosition: {x: 20, y: -20}
   m_SizeDelta: {x: 40, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}

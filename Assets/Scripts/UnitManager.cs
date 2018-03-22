@@ -14,6 +14,7 @@ public class UnitManager : MonoBehaviour {
 
 		this.CreateUnit ();
 		this.CreateUnit ();
+		this.CreateUnit ();
 	}
 
 	public void CreateUnit()
