@@ -74,6 +74,11 @@ public class InitiativePanel : MonoBehaviour {
 		return - this.rect.width / 2 + (InitiativePanel.itemWidth / 2);
 	}
 
+	public Unit FindCurrectActiveUnit()
+	{
+		
+	}
+
 	public void RenderList(bool isAnimated = true) 
 	{
 		int initiative = this.currentInitiative;

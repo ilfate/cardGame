@@ -7,21 +7,19 @@ using DigitalRuby.Tween;
 public class InitiativeNumber : MonoBehaviour {
 
 	public int number;
-	public float moveTime = 10.03f;
-	private float inverseMoveTime;
+	public float moveTime = 0.3f;
 
 	protected InitiativePanel panel;
 
 	void Awake () {
 		this.panel = this.transform.parent.gameObject.GetComponent<InitiativePanel> ();
-		//this.inverseMoveTime = 1f / this.moveTime;
 	}
 
 	public bool CalculatePosition(int position, bool isAnimated = true)
 	{
 		float start = this.panel.GetRenderStartPosition ();
 		float x = start + (position * InitiativePanel.itemWidth);
-		if (x > start + this.panel.rect.width || x < start) {
+		if (x > start + this.panel.rect.width + InitiativePanel.itemWidth || x < start - InitiativePanel.itemWidth) {
 			this.gameObject.SetActive (false);
 			return false;
 		}
@@ -32,7 +30,7 @@ public class InitiativeNumber : MonoBehaviour {
 			this.transform.localPosition = end;
 		} else {
 			//StartCoroutine (this.SmoothMovement (end));
-			this.gameObject.Tween("MoveNumber" + this.number, this.transform.localPosition, end, 0.3f, TweenScaleFunctions.CubicEaseIn, (t) =>
+			this.gameObject.Tween("MoveNumber" + this.number, this.transform.localPosition, end, moveTime, TweenScaleFunctions.CubicEaseIn, (t) =>
 				{
 					this.transform.localPosition = t.CurrentValue;
 				}, (t2) => { });

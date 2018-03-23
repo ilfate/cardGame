@@ -7,14 +7,11 @@ public class UnitManager : MonoBehaviour {
 	public GameObject unitPrefab;
 	public GameObject initiativePanel;
 
+	public GameObject currectActiveUnit;
+
 	// Use this for initialization
 	void Start () {
 		this.initiativePanel = GameObject.Find ("InitiativePanel");
-
-
-		this.CreateUnit ();
-		this.CreateUnit ();
-		this.CreateUnit ();
 	}
 
 	public void CreateUnit()
@@ -23,6 +20,8 @@ public class UnitManager : MonoBehaviour {
 		unitObj.transform.SetParent (transform);
 		this.initiativePanel.GetComponent<InitiativePanel>().AddToList (unitObj.GetComponent<Unit>());
 	}
+	
+	
 	
 	// Update is called once per frame
 	void Update () {
