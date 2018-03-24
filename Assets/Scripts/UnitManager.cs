@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class UnitManager : MonoBehaviour {
 
 	public GameObject unitPrefab;
 	public GameObject initiativePanel;
 
-	public GameObject currectActiveUnit;
+	public Unit currectActiveUnit;
 
 	// Use this for initialization
 	void Start () {
@@ -21,7 +22,21 @@ public class UnitManager : MonoBehaviour {
 		this.initiativePanel.GetComponent<InitiativePanel>().AddToList (unitObj.GetComponent<Unit>());
 	}
 	
-	
+	public void FindNextUnit()
+	{
+		initiativePanel.GetComponent<InitiativePanel> ().MakeStepTillNextUnit ();
+	}
+
+	public void UnitAction()
+	{
+		if (!currectActiveUnit)
+			return;
+		currectActiveUnit.Action ();
+	}
+
+	public void UpdateTimeLine() {
+		initiativePanel.GetComponent<InitiativePanel> ().UpdateUnits ();
+	}
 	
 	// Update is called once per frame
 	void Update () {

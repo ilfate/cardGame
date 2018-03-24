@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using System.Linq;
 
 public class InitiativePanel : MonoBehaviour {
 
@@ -12,6 +13,9 @@ public class InitiativePanel : MonoBehaviour {
 	public GameObject numberListPrefab;
 	public Rect rect;
 	protected Dictionary<int, GameObject> numbersList;
+	protected float stepDeleay = 0.4f;
+	protected UnitManager unitManager;
+
 
 	public static float itemWidth;
 
@@ -24,6 +28,7 @@ public class InitiativePanel : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		Canvas.ForceUpdateCanvases ();
+		unitManager = GameObject.Find ("UnitManager").GetComponent<UnitManager>();
 		this.rect = this.GetComponent<RectTransform> ().rect;
 		InitiativePanel.itemWidth = listItemPrefab.GetComponent<RectTransform> ().rect.width;
 		for (int i = 0; i < 100; i++) {
@@ -31,8 +36,11 @@ public class InitiativePanel : MonoBehaviour {
 			number.GetComponent<Text> ().text = i.ToString ();
 			InitiativeNumber numberComponent = number.GetComponent<InitiativeNumber> ();
 			numberComponent.number = i;
-			numberComponent.CalculatePosition (i - this.currentInitiative, false);
-
+			int position = i - this.currentInitiative;
+			if (numberComponent.IsVisible(position)) {
+				Vector3 endPosition = numberComponent.CalculatePosition (position);
+				numberComponent.SetPosition (endPosition);
+			}
 			//this.UpdateNumber (number);
 			this.numbersList.Add (i, number);
 
@@ -66,7 +74,7 @@ public class InitiativePanel : MonoBehaviour {
 
 		slot.Add (newListItem);
 		this.list.Add (initiative, slot);
-		this.RenderList (false);
+		this.RenderList ();
 	}
 
 	public float GetRenderStartPosition()
@@ -74,21 +82,62 @@ public class InitiativePanel : MonoBehaviour {
 		return - this.rect.width / 2 + (InitiativePanel.itemWidth / 2);
 	}
 
-	public Unit FindCurrectActiveUnit()
+	public void MakeStepTillNextUnit()
 	{
 		
+		unitManager.currectActiveUnit = null;
+		StartCoroutine (MultipleSteps (() => {
+			List<GameObject> slot = list [currentInitiative];
+			unitManager.currectActiveUnit = slot.First ().GetComponent<InitiativeItem>().unit;
+		}));
+
 	}
 
-	public void RenderList(bool isAnimated = true) 
+	IEnumerator MultipleSteps(Action callback)
+	{
+		while (!list.ContainsKey (currentInitiative)) {
+			Step ();
+			yield return new WaitForSeconds (stepDeleay);
+		}
+		callback ();
+	}
+
+	public void UpdateUnits() {
+		bool wasUpdated = false;
+		foreach (KeyValuePair<int, List<GameObject>> pair in list) {
+			for (int key = 0; key < pair.Value.Count; key++) {
+				GameObject initiativeObj = pair.Value [key];
+				Unit unit = initiativeObj.GetComponent<InitiativeItem> ().unit;
+				if (unit.currentInitiative != pair.Key) {
+					// this unit initiative has changed. we need to move it
+					pair.Value.Remove(initiativeObj);
+					AddToList (unit);
+					wasUpdated = true;
+				}
+			}
+		}
+		if (wasUpdated) {
+			RenderList ();
+		}
+	}
+
+	public void RenderList() 
 	{
 		int initiative = this.currentInitiative;
 		int position = 0;
 		bool noSpaceLeft = false;
 		while (!noSpaceLeft) {
 			InitiativeNumber numberObj = this.numbersList [initiative].GetComponent<InitiativeNumber>();
-			noSpaceLeft = !numberObj.CalculatePosition (position, isAnimated);
-			if (noSpaceLeft)
+			bool wasActive = numberObj.WasActive ();
+			noSpaceLeft = !numberObj.IsVisible (position);
+			if (noSpaceLeft) {
 				break;
+			}
+			Vector3 numberPosition = numberObj.CalculatePosition (position);
+			if (!wasActive) {
+				numberObj.SetPosition (numberObj.FindLisstEndPosition());
+			}
+			numberObj.Animate (numberPosition);
 			if (this.list.ContainsKey (initiative)) {
 				// yes we have here items
 				List<GameObject> slot = this.list [initiative];
