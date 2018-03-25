@@ -13,10 +13,9 @@ public class InitiativePanel : MonoBehaviour {
 	public GameObject numberListPrefab;
 	public Rect rect;
 	protected Dictionary<int, GameObject> numbersList;
-	protected float stepDeleay = 0.4f;
 	protected UnitManager unitManager;
 
-
+	public static float stepDeleay = 0.4f;
 	public static float itemWidth;
 
 	void Awake() {
@@ -34,11 +33,12 @@ public class InitiativePanel : MonoBehaviour {
 		for (int i = 0; i < 100; i++) {
 			GameObject number = Instantiate (this.numberListPrefab, Vector3.zero, Quaternion.identity, this.transform);
 			number.GetComponent<Text> ().text = i.ToString ();
+			number.name = "InitiativeNumber_" + i;
 			InitiativeNumber numberComponent = number.GetComponent<InitiativeNumber> ();
 			numberComponent.number = i;
 			int position = i - this.currentInitiative;
 			if (numberComponent.IsVisible(position)) {
-				Vector3 endPosition = numberComponent.CalculatePosition (position);
+				Vector3 endPosition = CalculatePosition (position);
 				numberComponent.SetPosition (endPosition);
 			}
 			//this.UpdateNumber (number);
@@ -68,7 +68,8 @@ public class InitiativePanel : MonoBehaviour {
 		}
 
 		GameObject newListItem = Instantiate (this.listItemPrefab, Vector3.zero, Quaternion.identity, this.transform);
-		InitiativeItem item = newListItem.GetComponent<InitiativeItem> ();
+		newListItem.name = "Initiative" + unit.name;
+		InitiativeUnit item = newListItem.GetComponent<InitiativeUnit> ();
 		item.unit = unit;
 
 
@@ -88,7 +89,7 @@ public class InitiativePanel : MonoBehaviour {
 		unitManager.currectActiveUnit = null;
 		StartCoroutine (MultipleSteps (() => {
 			List<GameObject> slot = list [currentInitiative];
-			unitManager.currectActiveUnit = slot.First ().GetComponent<InitiativeItem>().unit;
+			unitManager.ActivateNextUnit(slot.First ().GetComponent<InitiativeUnit>().unit);
 		}));
 
 	}
@@ -97,28 +98,53 @@ public class InitiativePanel : MonoBehaviour {
 	{
 		while (!list.ContainsKey (currentInitiative)) {
 			Step ();
-			yield return new WaitForSeconds (stepDeleay);
+			yield return new WaitForSeconds (InitiativePanel.stepDeleay);
 		}
 		callback ();
 	}
 
 	public void UpdateUnits() {
 		bool wasUpdated = false;
+		Dictionary<int, List<GameObject>> newList = new Dictionary<int, List<GameObject>> ();
 		foreach (KeyValuePair<int, List<GameObject>> pair in list) {
+			List<GameObject> newSlot = new List<GameObject> ();
+			if (newList.ContainsKey (pair.Key)) {
+				newSlot = newList [pair.Key];
+			}
+			
 			for (int key = 0; key < pair.Value.Count; key++) {
 				GameObject initiativeObj = pair.Value [key];
-				Unit unit = initiativeObj.GetComponent<InitiativeItem> ().unit;
+				Unit unit = initiativeObj.GetComponent<InitiativeUnit> ().unit;
 				if (unit.currentInitiative != pair.Key) {
 					// this unit initiative has changed. we need to move it
-					pair.Value.Remove(initiativeObj);
-					AddToList (unit);
+					if (newList.ContainsKey (unit.currentInitiative)) {
+						newList [unit.currentInitiative].Add (initiativeObj);
+					} else {
+						List<GameObject> featureSlot = new List<GameObject> ();
+						featureSlot.Add (initiativeObj);
+						newList.Add (unit.currentInitiative, featureSlot);
+					}
 					wasUpdated = true;
+				} else {
+					newSlot.Add (initiativeObj);
 				}
 			}
+			if (newSlot.Count > 0) {
+				newList.Add (pair.Key, newSlot);
+			}
 		}
+		list = newList;
 		if (wasUpdated) {
 			RenderList ();
 		}
+	}
+
+	public Vector3 CalculatePosition(int position)
+	{
+		float start = GetRenderStartPosition ();
+		float x = start + (position * InitiativePanel.itemWidth);
+		Vector3 end = new Vector3 (x, - rect.height / 2, 0);
+		return end;
 	}
 
 	public void RenderList() 
@@ -133,7 +159,7 @@ public class InitiativePanel : MonoBehaviour {
 			if (noSpaceLeft) {
 				break;
 			}
-			Vector3 numberPosition = numberObj.CalculatePosition (position);
+			Vector3 numberPosition = CalculatePosition (position);
 			if (!wasActive) {
 				numberObj.SetPosition (numberObj.FindLisstEndPosition());
 			}
@@ -141,12 +167,12 @@ public class InitiativePanel : MonoBehaviour {
 			if (this.list.ContainsKey (initiative)) {
 				// yes we have here items
 				List<GameObject> slot = this.list [initiative];
-				int unitIconPosition = 0;
 				foreach (GameObject itemObj in slot) {
-					InitiativeItem item = itemObj.GetComponent<InitiativeItem> ();
-					item.transform.SetParent(numberObj.transform, false);
-					item.CalculatePosition (unitIconPosition);
-					unitIconPosition ++;
+					InitiativeUnit item = itemObj.GetComponent<InitiativeUnit> ();
+
+					Vector3 itemPosition = CalculatePosition (position);
+					item.Animate (itemPosition);
+
 					position ++;
 				}
 			} else {

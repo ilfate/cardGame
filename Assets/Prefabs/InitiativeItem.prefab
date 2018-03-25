@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 224584649509350012}
   - component: {fileID: 222976864308396488}
   - component: {fileID: 114672298775577430}
-  - component: {fileID: 114539437809880144}
+  - component: {fileID: 114713790875782444}
   m_Layer: 5
   m_Name: InitiativeItem
   m_TagString: Untagged
@@ -29,19 +29,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &114539437809880144
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1745163356051708}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d87ca4466271c04bb30083f438fea82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  unit: {fileID: 0}
-  panel: {fileID: 0}
 --- !u!114 &114672298775577430
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -69,6 +56,17 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114713790875782444
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1745163356051708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76b1d9d2dac41ce4e80009e5658714ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &222976864308396488
 CanvasRenderer:
   m_ObjectHideFlags: 1

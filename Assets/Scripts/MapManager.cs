@@ -3,18 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class MapManager : MonoBehaviour {
-
-	private Transform mapContainer;
-
+public class MapManager : MonoBehaviour 
+{
+	public const string SORTING_LAYER = "Ground";
 	public int mapWidth = 8;
 	public int mapHeight = 8;
 
 	public GameObject[] cellTiles;
 
+	protected UnitManager unitManager;
+	protected ControlsManager controlsManager;
+
 
 	// Use this for initialization
 	void Start () {
+		unitManager = GameObject.Find ("UnitManager").GetComponent<UnitManager>();
+		controlsManager = GameObject.Find ("ControlsManager").GetComponent<ControlsManager>();
 		MapSetup ();
 	}
 	
@@ -25,15 +29,28 @@ public class MapManager : MonoBehaviour {
 
 	void MapSetup()
 	{
-		mapContainer = new GameObject ("MapContainer").transform;
 		for (int y = 0; y < mapHeight; y++) {
 			for (int x = 0; x < mapWidth; x++) {
 				GameObject tilePrefab = cellTiles [Random.Range (0, cellTiles.Length)];
+				GameObject tile = Instantiate (tilePrefab, new Vector3 (x, y, 0), Quaternion.identity, transform) as GameObject;
 
-				GameObject tile = Instantiate (tilePrefab, new Vector3 (x, y, 0), Quaternion.identity) as GameObject;
-				tile.transform.SetParent (mapContainer);
+				tile.GetComponent<SpriteRenderer>().sortingLayerName = MapManager.SORTING_LAYER;
 				//SpriteRenderer sprite = tile.GetComponent<SpriteRenderer>();
 				//sprite.sortingLayerName = "Ground";
+			}
+		}
+	}
+
+	public void DisplayMoveControls(Unit unit)
+	{
+		
+		Vector3[] movementDirections = unit.GetPossibleMovements ();
+		foreach (Vector3 vector in movementDirections) {
+			Debug.Log (vector);
+			int x = (int) vector.x;
+			int y = (int) vector.y;
+			if (!unitManager.HasUnit (x, y)) {
+				controlsManager.AddMoveControll (x, y);
 			}
 		}
 	}
