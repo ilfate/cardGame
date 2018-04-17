@@ -19,8 +19,11 @@ public class ControlsManager : MonoBehaviour {
 	{
 		GameObject button = Instantiate (moveSquarePrefab, new Vector3(x, y, 0), Quaternion.identity, transform);
 		button.GetComponent<SpriteRenderer>().sortingLayerName = ControlsManager.SORTING_LAYER;
+		//button.
 		buttons.Add (button);
 	}
+
+
 	
 	// Update is called once per frame
 	void Update () {
