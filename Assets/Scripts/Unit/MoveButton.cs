@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class MoveButton : MonoBehaviour {
 	
-
+	public Unit unit;
 
 	void OnMouseDown() {
-		//if(Input.GetMouseDown(0)) {
-		Debug.Log ("hello");
-		//}
+		unit.Move ((int) this.transform.position.x, (int) this.transform.position.y);
 	}
 }

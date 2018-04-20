@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using DG.Tweening;
 
 public class Unit : MonoBehaviour {
 
@@ -14,6 +15,7 @@ public class Unit : MonoBehaviour {
 	public int x;
 	public int y;
 	protected UnitManager unitManager;
+	public ControlsManager controlsManager;
 	protected Vector3[] possibleMovements;
 
 
@@ -31,6 +33,7 @@ public class Unit : MonoBehaviour {
 
 	void Start() {
 		unitManager = GameObject.Find ("UnitManager").GetComponent<UnitManager> ();
+		controlsManager = GameObject.Find ("ControlsManager").GetComponent<ControlsManager>();
 	}
 	
 	// Update is called once per frame
@@ -48,6 +51,24 @@ public class Unit : MonoBehaviour {
 		get {
 			return currentInitiative;
 		}
+	}
+
+	public void Move(int x, int y)
+	{
+		this.x = x;
+		this.y = y;
+		Vector3 end = new Vector3 (x, y, 0);
+		//this.gameObject.Tween("MoveUnit" + this.unitName, this.transform.position, end, 0.3f, TweenScaleFunctions.CubicEaseIn, 
+		//	(t) => {
+		//		this.transform.position = t.CurrentValue;
+		//	}, null);
+		transform.DOMove(new Vector3(x, y, 0), 0.3f).OnComplete(AfterMove);
+		controlsManager.hideAllControlls ();
+	}
+
+	public void AfterMove()
+	{
+		controlsManager.DisplayMoveControls (this);
 	}
 
 	public Vector3[] GetPossibleMovements()

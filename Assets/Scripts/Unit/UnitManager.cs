@@ -10,6 +10,7 @@ public class UnitManager : MonoBehaviour {
 	public GameObject unitPrefab;
 	public GameObject initiativePanel;
 	public MapManager mapManager;
+	public ControlsManager controlsManager;
 
 	public Unit currectActiveUnit;
 
@@ -25,6 +26,7 @@ public class UnitManager : MonoBehaviour {
 	void Start () {
 		this.initiativePanel = GameObject.Find ("InitiativePanel");
 		mapManager = GameObject.Find ("MapManager").GetComponent<MapManager>();
+		controlsManager = GameObject.Find ("ControlsManager").GetComponent<ControlsManager>();
 
 		CreateUnit (3, 3);
 		CreateUnit (2, 2);
@@ -68,7 +70,7 @@ public class UnitManager : MonoBehaviour {
 	public void ActivateNextUnit(Unit unit)
 	{
 		currectActiveUnit = unit;
-		mapManager.DisplayMoveControls (unit);
+		controlsManager.DisplayMoveControls (unit);
 	}
 
 

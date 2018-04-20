@@ -41,17 +41,5 @@ public class MapManager : MonoBehaviour
 		}
 	}
 
-	public void DisplayMoveControls(Unit unit)
-	{
-		
-		Vector3[] movementDirections = unit.GetPossibleMovements ();
-		foreach (Vector3 vector in movementDirections) {
-			Debug.Log (vector);
-			int x = (int) vector.x;
-			int y = (int) vector.y;
-			if (!unitManager.HasUnit (x, y)) {
-				controlsManager.AddMoveControll (x, y);
-			}
-		}
-	}
+
 }
