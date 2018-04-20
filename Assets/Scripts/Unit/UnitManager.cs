@@ -52,14 +52,31 @@ public class UnitManager : MonoBehaviour {
 		units.Add (unit.x.ToString () + "_" + unit.y.ToString (), unitObj);
 	}
 
+	public void MoveUnit(Unit unit, Vector3 from)
+	{
+		this.RemoveUnit ((int)from.x, (int)from.y);
+		this.AddUnit (unit.gameObject);
+
+	}
+
+	public void RemoveUnit(int x, int y)
+	{
+		units.Remove (GetKey(x, y));
+	}
+
 	public bool HasUnit(int x, int y) 
 	{
-		return units.ContainsKey (x.ToString () + "_" + y.ToString ());
+		return units.ContainsKey (GetKey(x, y));
+	}
+
+	protected string GetKey(int x, int y)
+	{
+		return x.ToString () + "_" + y.ToString ();
 	}
 
 	public GameObject GetUnit(int x, int y)
 	{
-		return units [x.ToString () + "_" + y.ToString ()];
+		return units [GetKey(x, y)];
 	}
 	
 	public void FindNextUnit()
