@@ -50,6 +50,7 @@ public class UnitManager : MonoBehaviour {
 	{
 		Unit unit = unitObj.GetComponent<Unit> ();
 		units.Add (unit.x.ToString () + "_" + unit.y.ToString (), unitObj);
+		mapManager.updateVisible (GetVisibleTiles ());
 	}
 
 	public void MoveUnit(Unit unit, Vector3 from)
@@ -70,6 +71,11 @@ public class UnitManager : MonoBehaviour {
 	}
 
 	protected string GetKey(int x, int y)
+	{
+		return x.ToString () + "_" + y.ToString ();
+	}
+		
+	protected string GetKey(float x, float y)
 	{
 		return x.ToString () + "_" + y.ToString ();
 	}
@@ -109,8 +115,19 @@ public class UnitManager : MonoBehaviour {
 		FindNextUnit ();
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
+	public List<Vector3> GetVisibleTiles()
+	{
+		List<string> keyMap = new List<string> ();
+		List<Vector3> visible = new List<Vector3>();
+		foreach (KeyValuePair<string, GameObject> pair in units) {
+			Unit unit = pair.Value.GetComponent<Unit> ();
+			Vector3[] pattern = unit.GetVisibleTiles ();
+			foreach (Vector3 vector in pattern) {
+				if (!keyMap.Contains(GetKey(vector.x, vector.y))) {
+					visible.Add (vector + new Vector3(unit.x, unit.y, 0));
+				}
+			}
+		}
+		return visible;
 	}
 }

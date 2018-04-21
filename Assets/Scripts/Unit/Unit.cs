@@ -14,9 +14,12 @@ public class Unit : MonoBehaviour {
 	public int previousInitiative;
 	public int x;
 	public int y;
+	public int d;
 	protected UnitManager unitManager;
 	public ControlsManager controlsManager;
+
 	protected Vector3[] possibleMovements;
+	protected Vector3[] visionPattern;
 
 	protected float maxMovementsPerTurn;
 	protected float movementsDoneThisTurn = 0f;
@@ -40,6 +43,38 @@ public class Unit : MonoBehaviour {
 			new Vector3(0, 1, 0),
 			new Vector3(-1, 0, 0),
 			new Vector3(0, -1, 0),
+		};
+
+		visionPattern = new Vector3[] {
+			new Vector3(-1, 0, 0),
+			new Vector3(-2, 0, 0),
+			new Vector3(1, 0, 0),
+			new Vector3(2, 0, 0),
+			new Vector3(0, -1, 0),
+			new Vector3(-1, -1, 0),
+			new Vector3(-2, -1, 0),
+			new Vector3(-3, -1, 0),
+			new Vector3(-4, -1, 0),
+			new Vector3(1, -1, 0),
+			new Vector3(2, -1, 0),
+			new Vector3(3, -1, 0),
+			new Vector3(4, -1, 0),
+			new Vector3(0, -2, 0),
+			new Vector3(-1, -2, 0),
+			new Vector3(-2, -2, 0),
+			new Vector3(-3, -2, 0),
+			new Vector3(1, -2, 0),
+			new Vector3(2, -2, 0),
+			new Vector3(3, -2, 0),
+			new Vector3(0, -3, 0),
+			new Vector3(-1, -3, 0),
+			new Vector3(-2, -3, 0),
+			new Vector3(1, -3, 0),
+			new Vector3(2, -3, 0),
+			new Vector3(0, -4, 0),
+			new Vector3(-1, -4, 0),
+			new Vector3(1, -4, 0),
+			new Vector3(0, -5, 0),
 		};
 	}
 
@@ -112,5 +147,10 @@ public class Unit : MonoBehaviour {
 	{
 		return possibleMovements.Select (vector => vector + gameObject.transform.position).ToArray();
 		//return possibleMovements;
+	}
+
+	public Vector3[] GetVisibleTiles()
+	{
+		return visionPattern;
 	}
 }
