@@ -8,5 +8,6 @@ public class MoveButton : MonoBehaviour {
 
 	void OnMouseDown() {
 		unit.Move ((int) this.transform.position.x, (int) this.transform.position.y);
+		//unit.Rotate(1);
 	}
 }

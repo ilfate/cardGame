@@ -20,6 +20,8 @@ public class ControlsManager : MonoBehaviour {
 	public void AddMoveControll(int x, int y, Unit unit)
 	{
 		GameObject button = Instantiate (moveSquarePrefab, new Vector3(x, y, 0), Quaternion.identity, transform);
+		SpriteRenderer renderer = button.GetComponent<SpriteRenderer> ();
+		renderer.color = new Color (renderer.color.r, renderer.color.g, renderer.color.b, 0.5f);
 		button.GetComponent<SpriteRenderer>().sortingLayerName = ControlsManager.SORTING_LAYER;
 		button.GetComponent<MoveButton> ().unit = unit;
 		//button.
@@ -38,6 +40,7 @@ public class ControlsManager : MonoBehaviour {
 				AddMoveControll (x, y, unit);
 			}
 		}
+
 	}
 
 	public void hideAllControlls()

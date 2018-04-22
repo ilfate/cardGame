@@ -14,7 +14,7 @@ public class Unit : MonoBehaviour {
 	public int previousInitiative;
 	public int x;
 	public int y;
-	public int d;
+	public int d = 0;
 	protected UnitManager unitManager;
 	public ControlsManager controlsManager;
 
@@ -82,11 +82,6 @@ public class Unit : MonoBehaviour {
 		unitManager = GameObject.Find ("UnitManager").GetComponent<UnitManager> ();
 		controlsManager = GameObject.Find ("ControlsManager").GetComponent<ControlsManager>();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
 	public void Action() {
 		AddInitiative (2);
@@ -121,6 +116,16 @@ public class Unit : MonoBehaviour {
 		controlsManager.hideAllControlls ();
 	}
 
+	public void Rotate(int direction)
+	{
+		this.d += direction;
+		if (d > 3)
+			d = 0;
+		if (d < 0)
+			d = 3;
+		unitManager.UpdateVisibility ();
+	}
+
 	public void AfterMove()
 	{
 		if (movementsDoneThisTurn >= maxMovementsPerTurn) {
@@ -151,6 +156,27 @@ public class Unit : MonoBehaviour {
 
 	public Vector3[] GetVisibleTiles()
 	{
-		return visionPattern;
+		float rotate = Mathf.PI * 2;
+		switch (d) {
+			case 0:
+				rotate = 180;
+				break;
+			case 1:
+				rotate = 90;
+				break;
+			case 2:
+				rotate = 0;
+				break;
+			case 3:
+				rotate = 270;
+				break;
+		}
+		Vector3[] returnArray = new Vector3[visionPattern.Length];
+		for (int i = 0; i < returnArray.Length; i++) {
+			returnArray [i] = Quaternion.Euler (0, 0, rotate) * (visionPattern [i] ); // + new Vector3(0.25f, 0.25f, 0)
+			//returnArray [i] = visionPattern [i]; // + new Vector3(0.25f, 0.25f, 0)
+			//Debug.Log(returnArray [i]);
+		}
+		return returnArray;
 	}
 }

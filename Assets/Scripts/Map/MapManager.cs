@@ -54,10 +54,10 @@ public class MapManager : MonoBehaviour
 			}
 		}
 		foreach (Vector3 vector in visible) {
-			int x = (int)vector.x;
-			int y = (int)vector.y;
+			int x = (int) Mathf.Round(vector.x);
+			int y = (int) Mathf.Round(vector.y);
 			if (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight) {
-				map [(int)vector.x, (int)vector.y].SetVisibility (true);
+				map [x, y].SetVisibility (true);
 			}
 		}
 	}

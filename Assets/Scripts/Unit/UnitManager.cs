@@ -29,7 +29,7 @@ public class UnitManager : MonoBehaviour {
 		controlsManager = GameObject.Find ("ControlsManager").GetComponent<ControlsManager>();
 
 		CreateUnit (3, 3);
-		CreateUnit (2, 2);
+		//CreateUnit (1, 1);
 	}
 
 	public void CreateUnit(int x, int y)
@@ -50,6 +50,11 @@ public class UnitManager : MonoBehaviour {
 	{
 		Unit unit = unitObj.GetComponent<Unit> ();
 		units.Add (unit.x.ToString () + "_" + unit.y.ToString (), unitObj);
+		UpdateVisibility ();
+	}
+
+	public void UpdateVisibility()
+	{
 		mapManager.updateVisible (GetVisibleTiles ());
 	}
 
@@ -125,9 +130,12 @@ public class UnitManager : MonoBehaviour {
 			foreach (Vector3 vector in pattern) {
 				if (!keyMap.Contains(GetKey(vector.x, vector.y))) {
 					visible.Add (vector + new Vector3(unit.x, unit.y, 0));
+					keyMap.Add (GetKey (vector.x, vector.y));
+					//Debug.Log (vector + new Vector3(unit.x, unit.y, 0));
 				}
 			}
 		}
+
 		return visible;
 	}
 }
