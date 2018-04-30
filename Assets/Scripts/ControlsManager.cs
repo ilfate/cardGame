@@ -1,11 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ControlsManager : MonoBehaviour {
 
 	protected List<GameObject> buttons;
 	protected UnitManager unitManager;
+
+	protected GameObject rotateLeftButton;
+	protected GameObject rotateRightButton;
+	protected GameObject rotationControlsPanel;
 
 	public GameObject moveSquarePrefab;
 
@@ -15,6 +20,10 @@ public class ControlsManager : MonoBehaviour {
 	void Start () {
 		unitManager = GameObject.Find ("UnitManager").GetComponent<UnitManager> ();
 		buttons = new List<GameObject> ();
+		rotateLeftButton = GameObject.Find("UnitRotateLeft");
+		rotateRightButton = GameObject.Find("UnitRotateRight");
+		rotationControlsPanel = GameObject.Find ("RotationControlls");
+		hideRotateButtons ();
 	}
 
 	public void AddMoveControll(int x, int y, Unit unit)
@@ -40,7 +49,7 @@ public class ControlsManager : MonoBehaviour {
 				AddMoveControll (x, y, unit);
 			}
 		}
-
+		showRotateButtons (unit);
 	}
 
 	public void hideAllControlls()
@@ -49,6 +58,28 @@ public class ControlsManager : MonoBehaviour {
 			Destroy (button);
 		}
 		buttons.Clear ();
+		hideRotateButtons ();
+	}
+
+	public void hideRotateButtons()
+	{
+		CanvasGroup group = rotationControlsPanel.GetComponent<CanvasGroup> ();
+		group.alpha = 0f;
+		group.blocksRaycasts = false;
+	}
+
+	public void showRotateButtons(Unit unit)
+	{
+		CanvasGroup group = rotationControlsPanel.GetComponent<CanvasGroup> ();
+		group.alpha = 1f;
+		group.blocksRaycasts = true;
+		Button btn1 = rotateLeftButton.GetComponent<Button> ();
+		btn1.onClick.RemoveAllListeners ();
+		btn1.onClick.AddListener (() => unit.Rotate (-1));
+
+		Button btn2 = rotateRightButton.GetComponent<Button> ();
+		btn2.onClick.RemoveAllListeners ();
+		btn2.onClick.AddListener (() => unit.Rotate (1));
 	}
 
 
